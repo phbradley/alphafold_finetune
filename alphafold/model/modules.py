@@ -1512,7 +1512,7 @@ class OuterProductMean(hk.Module):
         c.chunk_size,
         batched_args=[left_act],
         nonbatched_args=[],
-        low_memory=not is_training, #PB: justas changed from True to not is_training
+        low_memory=not is_training,
         input_subbatch_dim=1,
         output_subbatch_dim=0)
 

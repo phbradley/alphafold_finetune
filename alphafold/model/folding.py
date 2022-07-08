@@ -754,7 +754,7 @@ def find_structural_violations(
       residue_constants.van_der_waals_radius[name[0]]
       for name in residue_constants.atom_types
   ]
-  atomtype_radius = np.array(atomtype_radius) # PB HACK
+  atomtype_radius = np.array(atomtype_radius) # PB fix
   atom14_atom_radius = batch['atom14_atom_exists'] * utils.batched_gather(
       atomtype_radius, batch['residx_atom14_to_atom37'])
 
