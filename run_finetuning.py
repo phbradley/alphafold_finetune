@@ -81,7 +81,7 @@ flags.DEFINE_bool('no_ramp', False, help='if True, dont ramp')
 flags.DEFINE_bool('no_valid', False, help='if True, dont compute valid stats')
 flags.DEFINE_bool('no_random', False, help='if True, dont randomize')
 flags.DEFINE_bool('random_recycling', False, help='if True, set num_iter_recycling randomly during training')
-flags.DEFINE_bool('plddt_binder', True, help='if True, fit model based on pLDDT')
+flags.DEFINE_bool('plddt_binder', False, help='if True, fit model based on pLDDT')
 flags.DEFINE_float('pae_binder_slope', -7.9019634017508675, # from logistic regression
                    help='initial slope for PAE binder model')
 flags.DEFINE_float('plddt_binder_slope', 16.690735, # from logistic regression

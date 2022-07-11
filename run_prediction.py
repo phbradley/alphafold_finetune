@@ -1,14 +1,3 @@
-''' inputs are --chainseq target chainsequence (w '/'), and
---alignfile tsvfile with alignments to templates
-
---targets <targets_tsv_filename>
-targets_tsv_filename has columns: target_chainseq templates_alignfile
-
-alignfile has columns: template_pdbfile target_to_template_alignstring identities target_len template_len
-
-target_to_template_alignstring is ';' separated i:j, 0-indexed
-
-'''
 ######################################################################################88
 
 FREDHUTCH_HACKS = True # silly stuff Phil added for running on Hutch servers
@@ -24,7 +13,19 @@ if FREDHUTCH_HACKS:
 import argparse
 
 parser = argparse.ArgumentParser(
-    description="predict tcr:pmhc structure")
+    description="Run simple template-based alphafold inference",
+    epilog = f'''
+Examples:
+
+# this command will build models and compute confidence scores for
+# all 10mer peptides in HCV_POLG77 bound to HLA-A*02:01, using the default
+# alphafold model_2_ptm parameters
+python3 run_prediction.py --targets examples/pmhc_hcv_polg_10mers/targets.tsv --data_dir /home/pbradley/csdat/alphafold/data/ --outfile_prefix polg_test1 --model_name model_2_ptm
+
+
+    ''',
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+)
 
 parser.add_argument('--outfile_prefix',
                     help='Prefix that will be prepended to the output '
@@ -33,16 +34,16 @@ parser.add_argument('--final_outfile_prefix',
                     help='Prefix that will be prepended to the final output '
                     'tsv filename')
 parser.add_argument('--targets', required=True)
-parser.add_argument('--data_dir', help='Location of AlphaFold params/ '
-                    'folder')
+parser.add_argument('--data_dir', help='Location of AlphaFold params/ folder')
 
-parser.add_argument('--model_names', type=str, nargs='*', default=['model_1'])
+parser.add_argument('--model_names', type=str, nargs='*', default=['model_2_ptm'])
+parser.add_argument('--model_params_files', type=str, nargs='*')
+
 parser.add_argument('--verbose', action='store_true')
 parser.add_argument('--ignore_identities', action='store_true')
 parser.add_argument('--no_pdbs', action='store_true')
 parser.add_argument('--terse', action='store_true')
 parser.add_argument('--no_resample_msa', action='store_true')
-parser.add_argument('--model_params_files', type=str, nargs='*')
 
 args = parser.parse_args()
 
