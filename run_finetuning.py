@@ -37,11 +37,12 @@ print('done importing') ; sys.stdout.flush()
 
 flags = tf1.app.flags
 
-flags.DEFINE_string('outprefix', 'justtesting', help='string for outfiles')
+flags.DEFINE_string('outprefix', 'testrun', help='string prefix for all outfiles')
 flags.DEFINE_string('model_name', 'model_2_ptm', help='like model_1 or model_2_ptm')
 flags.DEFINE_string('train_dataset', None, help='tsv file')
 flags.DEFINE_string('valid_dataset', None, help='tsv file')
-flags.DEFINE_integer('crop_size', 190, help='Max size of training example; set this as low as possible for memory and speed')
+flags.DEFINE_integer('crop_size', 190, help='Max size of training example; set this '
+                     'as low as possible for memory and speed')
 
 
 flags.DEFINE_integer('num_epochs', 10, help='number of epochs')
@@ -50,21 +51,28 @@ flags.DEFINE_integer('apply_every', 1, help='how often to apply gradient updates
 flags.DEFINE_bool('notrain', False, help='if True, dont do any training')
 flags.DEFINE_bool('debug', False, help='debug')
 flags.DEFINE_bool('verbose', False, help='debug')
-flags.DEFINE_bool('test_load', False, help='if True, loop through datasets to test loading')
-flags.DEFINE_bool('dump_pdbs', False, help='if True, loop through datasets to test loading')
-flags.DEFINE_integer('print_steps', 25, help='printed averaged results every print_steps')
+flags.DEFINE_bool('test_load', False,
+                  help='if True, loop through datasets to test loading')
+flags.DEFINE_bool('dump_pdbs', False,
+                  help='if True, loop through datasets to test loading')
+flags.DEFINE_integer('print_steps', 25,
+                     help='printed averaged results every print_steps')
 flags.DEFINE_integer('save_steps', 100, help='save model + optimizer every save_steps')
-flags.DEFINE_integer('valid_steps', 100000, help='calc loss on whole valid set every valid_steps')
-flags.DEFINE_integer('num_cpus', 0, help='number of cpus for loading')
+flags.DEFINE_integer('valid_steps', 100000,
+                     help='calc loss on whole valid set every valid_steps')
+flags.DEFINE_integer('num_cpus', 0, help='number of (extra?) cpus for loading')
 flags.DEFINE_float('lr_coef', 0.025, help='learning rate coefficient')
-flags.DEFINE_float('fake_native_weight', 0.25, help='weight to apply to the alphafold loss when using a simulated or template structure as the native')
+flags.DEFINE_float('fake_native_weight', 0.25, help='weight to apply to the alphafold '
+                   'loss when using a predicted structure as the native')
 flags.DEFINE_float('struc_viol_weight', 1.0, help='structural violation weight')
-flags.DEFINE_integer('msa_clusters', 5, help='number of msa cluster sequences') # was 512
-flags.DEFINE_integer('extra_msa', 1, help='number of extra msa sequences') # was 1024
+flags.DEFINE_integer('msa_clusters', 5, help='number of msa cluster sequences')
+flags.DEFINE_integer('extra_msa', 1, help='number of extra msa sequences')
 flags.DEFINE_integer('num_evo_blocks', 48, help='number of evoformer blocks')
-flags.DEFINE_float('grad_norm_clip', 10.0, help='value to clip gradient norms per example')
-flags.DEFINE_string('data_dir', "/home/pbradley/csdat/alphafold/data/", help='location of alphafold params; passed to data.get_model_haiku_params; should contain params/ subfolder')
-flags.DEFINE_string('out_dir', '/home/pbradley/csdat/af2_finetune/output/', help='root location for saving params')
+flags.DEFINE_float('grad_norm_clip', 10.0, help='value to clip gradient norms '
+                   'per example')
+flags.DEFINE_string('data_dir', "/home/pbradley/csdat/alphafold/data/",
+                    help='location of alphafold params; passed to '
+                    'data.get_model_haiku_params; should contain params/ subfolder')
 
 flags.DEFINE_bool('only_fit_binder', False, help='if True, dont fit alphafold params')
 flags.DEFINE_bool('freeze_binder', False, help='if True, dont fit binder params')
@@ -97,18 +105,11 @@ model_name = FLAGS.model_name
 platform = jax.local_devices()[0].platform
 hostname = popen('hostname').readlines()[0].strip()
 
-outdir = FLAGS.out_dir
-if outdir[-1] != '/':
-    outdir += '/'
-if not os.path.exists(outdir):
-    print('creating directory:', outdir)
-    os.mkdir(outdir)
-
 
 print('cmd:', ' '.join(sys.argv))
 print('local_device:', platform, hostname)
 print('model_name:', model_name)
-print('outdir:', outdir, 'outprefix:', FLAGS.outprefix)
+print('outprefix:', FLAGS.outprefix)
 sys.stdout.flush()
 
 model_config = config.model_config(model_name)
@@ -117,7 +118,7 @@ model_config.model.resample_msa_in_recycling = True
 model_config.data.common.max_extra_msa = FLAGS.extra_msa
 model_config.data.eval.max_msa_clusters = FLAGS.msa_clusters
 model_config.data.eval.crop_size = FLAGS.crop_size
-model_config.model.heads.structure_module.structural_violation_loss_weight = FLAGS.struc_viol_weight #0.0 initially and then 1.0
+model_config.model.heads.structure_module.structural_violation_loss_weight = FLAGS.struc_viol_weight
 model_config.model.embeddings_and_evoformer.evoformer_num_block = FLAGS.num_evo_blocks
 
 ### Binder stuff #######################################################################
@@ -746,7 +747,7 @@ for e in range(num_epochs):
         if FLAGS.dump_pdbs:
             unrelaxed_protein = protein_from_prediction(
                 batch, predicted_dict)
-            outfile = f'{outdir}{FLAGS.outprefix}train_result_{e:02d}_{n:04d}.pdb'
+            outfile = f'{FLAGS.outprefix}train_result_{e:02d}_{n:04d}.pdb'
             with open(outfile, 'w') as f:
                 f.write(protein.to_pdb(unrelaxed_protein))
                 print('made:', outfile)
@@ -804,7 +805,7 @@ for e in range(num_epochs):
             temp_fape = []
             temp_sidechain_fape = []
         if (n+1) % FLAGS.save_steps == 0:
-            prefix = outdir + FLAGS.outprefix
+            prefix = FLAGS.outprefix
             step_fname = f'{prefix}_af_mhc_global_step.npy'
             np.save(step_fname, global_step)
 
