@@ -85,8 +85,7 @@ list_b = ['aatype',
         'extra_has_deletion',
         'extra_deletion_value',
         'msa_feat',
-        'target_feat',
-        'num_res_crop_start']
+        'target_feat']
 
 
 list_c = ['chi_mask',

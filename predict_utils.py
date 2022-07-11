@@ -213,7 +213,7 @@ def predict_structure(
         print(f"running {model_name}")
 
         processed_feature_dict = model_runner.process_features(
-            feature_dict, random_seed=random_seed, clamped=True)
+            feature_dict, random_seed=random_seed)
 
         prediction_result = model_runner.predict(processed_feature_dict)
 
@@ -459,10 +459,9 @@ def create_batch_for_training(
 
     if random_seed is None:
         random_seed = np.random.randint(0,999999)
-    clamped = True
     with tf.device('cpu:0'):
         processed_feature_dict = model_runner.process_features(
-            feature_dict, random_seed=random_seed, clamped=bool(clamped))
+            feature_dict, random_seed=random_seed)
     if verbose:
         print('features_after_initial_processing:',
               ' '.join(processed_feature_dict.keys()))

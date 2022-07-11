@@ -425,8 +425,6 @@ def make_fixed_size(protein, shape_schema, msa_cluster_size, extra_msa_size,
     # Don't transfer this to the accelerator.
     if k == 'extra_cluster_assignment':
       continue
-    if k == 'num_res_crop_start':
-      continue
     shape = v.shape.as_list()
     schema = shape_schema[k]
     assert len(shape) == len(schema), (
@@ -503,7 +501,7 @@ def crop_templates(protein, max_templates):
 
 @curry1
 def random_crop_to_size(protein, crop_size, max_templates, shape_schema,
-                        subsample_templates=False, clamped=True):
+                        subsample_templates=False):
   """Crop randomly to `crop_size`, or keep as is if shorter than that."""
   seq_length = protein['seq_length']
   if 'template_mask' in protein:
@@ -528,17 +526,10 @@ def random_crop_to_size(protein, crop_size, max_templates, shape_schema,
   num_templates_crop_size = tf.math.minimum(
       num_templates - templates_crop_start, max_templates)
 
-  if clamped:
-      num_res_crop_start = tf.random.stateless_uniform(
-          shape=(), minval=0, maxval=seq_length - num_res_crop_size + 1,
-          dtype=tf.int32, seed=seed_maker())
-  else:
-      x = tf.random.stateless_uniform(
-          shape=(), minval=0, maxval=seq_length - num_res_crop_size + 1,
-          dtype=tf.int32, seed=seed_maker())
-      num_res_crop_start = tf.random.stateless_uniform(
-          shape=(), minval=0, maxval=seq_length - num_res_crop_size + 1 - x,
-          dtype=tf.int32, seed=seed_maker())
+  num_res_crop_start = tf.random.stateless_uniform(
+    shape=(), minval=0, maxval=seq_length - num_res_crop_size + 1,
+    dtype=tf.int32, seed=seed_maker())
+
   templates_select_indices = tf.argsort(tf.random.stateless_uniform(
       [num_templates], seed=seed_maker()))
 
@@ -568,7 +559,6 @@ def random_crop_to_size(protein, crop_size, max_templates, shape_schema,
     protein[k] = tf.slice(v, crop_starts, crop_sizes)
 
   protein['seq_length'] = num_res_crop_size
-  protein['num_res_crop_start'] = num_res_crop_start
   return protein
 
 

@@ -92,8 +92,7 @@ class RunModel:
   def process_features(
       self,
       raw_features: Union[tf.train.Example, features.FeatureDict],
-      random_seed: int,
-      clamped: bool) -> features.FeatureDict:
+      random_seed: int) -> features.FeatureDict:
     """Processes features to prepare for feeding them into the model.
 
     Args:
@@ -108,8 +107,7 @@ class RunModel:
       return features.np_example_to_features(
           np_example=raw_features,
           config=self.config,
-          random_seed=random_seed,
-          clamped=clamped)
+          random_seed=random_seed)
     else:
       return features.tf_example_to_features(
           tf_example=raw_features,

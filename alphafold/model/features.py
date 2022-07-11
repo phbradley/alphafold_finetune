@@ -75,8 +75,7 @@ def tf_example_to_features(tf_example: tf.train.Example,
 
 def np_example_to_features(np_example: FeatureDict,
                            config: ml_collections.ConfigDict,
-                           random_seed: int = 0,
-                           clamped: bool = True) -> FeatureDict:
+                           random_seed: int = 0) -> FeatureDict:
   """Preprocesses NumPy feature dict using TF pipeline."""
   np_example = dict(np_example)
   num_res = int(np_example['seq_length'][0])
@@ -93,7 +92,7 @@ def np_example_to_features(np_example: FeatureDict,
         np_example=np_example, features=feature_names)
 
     processed_batch = input_pipeline.process_tensors_from_config(
-        tensor_dict, cfg, clamped=clamped)
+        tensor_dict, cfg)
 
   tf_graph.finalize()
 

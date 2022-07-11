@@ -61,7 +61,7 @@ def nonensembled_map_fns(data_config):
   return map_fns
 
 
-def ensembled_map_fns(data_config, clamped=True):
+def ensembled_map_fns(data_config):
   """Input pipeline functions that can be ensembled and averaged."""
   common_cfg = data_config.common
   eval_cfg = data_config.eval
@@ -109,7 +109,7 @@ def ensembled_map_fns(data_config, clamped=True):
         eval_cfg.crop_size,
         eval_cfg.max_templates,
         crop_feats,
-        eval_cfg.subsample_templates, clamped=clamped))
+        eval_cfg.subsample_templates))
     map_fns.append(data_transforms.make_fixed_size(
         crop_feats,
         pad_msa_clusters,
@@ -122,13 +122,13 @@ def ensembled_map_fns(data_config, clamped=True):
   return map_fns
 
 
-def process_tensors_from_config(tensors, data_config, clamped=True):
+def process_tensors_from_config(tensors, data_config):
   """Apply filters and maps to an existing dataset, based on the config."""
 
   def wrap_ensemble_fn(data, i):
     """Function to be mapped over the ensemble dimension."""
     d = data.copy()
-    fns = ensembled_map_fns(data_config, clamped=clamped)
+    fns = ensembled_map_fns(data_config)
     fn = compose(fns)
     d['ensemble_index'] = i
     return fn(d)
