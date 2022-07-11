@@ -269,7 +269,7 @@ else:
 binder_classifier = hk.transform(binder_classification_fn, apply_rng=True)
 
 # create the initial model params, this part is a little hacky
-if not FLAGS.plddt_binder:
+if not FLAGS.plddt_binder: ## PAE model
     rng = jax.random.PRNGKey(42)
 
     classifier_dict = {}
@@ -291,7 +291,7 @@ if not FLAGS.plddt_binder:
         input_features=classifier_dict,
     )
 
-else:
+else: # pLDDT model ################
     rng = jax.random.PRNGKey(42)
 
     classifier_dict = {}
