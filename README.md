@@ -48,11 +48,17 @@ python3 run_prediction.py --targets examples/pdz/pdz_10_random_peptides.tsv \
     --model_names model_2_ptm --ignore_identities
 ```
 
-Model 10 random peptides per target/class for 23 SH3 domains, with fine-tuned params
+Model 10 random peptides per target/class for 23 SH3 domains, with default model_2_ptm
+AND fine-tuned params. Here we pass multiple values for `--model_names` and
+`--model_params_files`, and the values should correspond 1:1 in order.
+We give the string `'classic'` in place of the parameter filename for the
+non-fine-tuned parameters, which is the signal to load default parameters from the
+`params/` folder in `$ALPHAFOLD_DATA_DIR`.
 
 ```
 python3 run_prediction.py --targets examples/sh3/sh3_10_random_peptides.tsv \
     --ignore_identities --outfile_prefix sh3_test1 \
-    --model_names model_2_ptm_ft \
-    --model_params_files datasets_alphafold_finetune/params/mixed_mhc_pae_run6_af_mhc_params_20640.pkl
+    --data_dir $ALPHAFOLD_DATA_DIR \
+    --model_names model_2_ptm model_2_ptm_ft \
+    --model_params_files classic datasets_alphafold_finetune/params/mixed_mhc_pae_run6_af_mhc_params_20640.pkl
 ```

@@ -11,6 +11,7 @@ import tensorflow as tf
 import train_utils
 import random
 from timeit import default_timer as timer
+import haiku as hk
 from alphafold.common import residue_constants
 from alphafold.common import protein
 from alphafold.data import pipeline
