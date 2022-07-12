@@ -90,7 +90,7 @@ starting at 0 with the first amino acid of the first chain, proceeding up to `nr
 for the last amino acid of the last chain, where `nres` is the total number of amino
 acids in the concatenated sequence (the sum of the chain lengths). Formatted as a
 ';'-separated string like '1:0;2:1;3:2;4:3' . Same format as the
-`target_to_template_alignstring` column of the templates files.
+`target_to_template_alignstring` column of the alignment files.
 
 * `binder`: 0 or 1 to indicate if the training/testing example represents a binder (1)
 or a non-binder (0)
@@ -121,7 +121,8 @@ error-checking.
 ### alignment files
 
 These tab-separated values files provide information on the alphafold modeling
-template structures and their alignments to the target sequence. The required fields are
+template structures and their alignments to the target sequence.
+See `examples/*/alignments/*` for examples. The required fields are
 
 * `template_pdbfile`: PDB format file with template coordinates.
 It's safest if this has been "cleaned" to remove water, small molecules, and
