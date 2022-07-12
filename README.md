@@ -72,11 +72,12 @@ python3 run_prediction.py --targets examples/sh3/sh3_10_random_peptides.tsv \
 
 Files with lists of modeling targets (for `run_prediction.py`) or training examples
 (for `run_finetuning.py`) should be formatted as tab-separated values files.
-The required fields are
+See examples in `examples/*/*tsv`. The required fields are
 
 * `target_chainseq`: the full amino acid sequence to be modelled as a single string with '/' characters separating the individual chains. See examples in `examples/*/*tsv`.
 
-* `templates_alignfile`: a path to the file with information on modeling templates
+* `templates_alignfile`: Filename of the 'alignment file' that contains information on
+alphafold modeling templates (the format for alignment files is given below).
 
 For fine-tuning, these additional fields are required:
 
