@@ -11,7 +11,11 @@ extensively tested that template for protein:peptide binding.
 ## Fine-tuning for peptide-MHC on a tiny dataset
 
 ```
-python run_finetuning.py --binder_intercepts 0.80367635 --binder_intercepts 0.43373787  --freeze_binder  --train_dataset examples/tiny_pmhc_finetune/tiny_example_train.tsv --valid_dataset examples/tiny_pmhc_finetune/tiny_example_valid.tsv
+python run_finetuning.py \
+    --binder_intercepts 0.80367635 --binder_intercepts 0.43373787  \
+    --freeze_binder  \
+    --train_dataset examples/tiny_pmhc_finetune/tiny_example_train.tsv \
+    --valid_dataset examples/tiny_pmhc_finetune/tiny_example_valid.tsv
 ```
 
 ## Fine-tuning peptide-MHC (full model)
@@ -31,19 +35,24 @@ python run_finetuning.py \
 
 HLA-A*02:01 10mer scan, with default alphafold params. Here $ALPHAFOLD_DATA_DIR should point to a directory that contains the `params/` subdirectory.
 ```
-python3 run_prediction.py --targets examples/pmhc_hcv_polg_10mers/targets.tsv --data_dir $ALPHAFOLD_DATA_DIR --outfile_prefix polg_test1 --model_names model_2_ptm --ignore_identities
+python run_prediction.py --targets examples/pmhc_hcv_polg_10mers/targets.tsv \
+    --data_dir $ALPHAFOLD_DATA_DIR --outfile_prefix polg_test1 \
+    --model_names model_2_ptm --ignore_identities
 ```
 
 HLA-A*02:01 10mer scan with fine-tuned params
 
 ```
-python3 run_prediction.py --targets examples/pmhc_hcv_polg_10mers/targets.tsv --outfile_prefix polg_test2 --model_names model_2_ptm_ft --model_params_files datasets_alphafold_finetune/params/mixed_mhc_pae_run6_af_mhc_params_20640.pkl --ignore_identities
+python run_prediction.py --targets examples/pmhc_hcv_polg_10mers/targets.tsv \
+    --outfile_prefix polg_test2 --model_names model_2_ptm_ft \
+    --model_params_files datasets_alphafold_finetune/params/mixed_mhc_pae_run6_af_mhc_params_20640.pkl \
+    --ignore_identities
 ```
 
 Model 10 random peptides per target for 17 PDZ domains, with default params
 
 ```
-python3 run_prediction.py --targets examples/pdz/pdz_10_random_peptides.tsv \
+python run_prediction.py --targets examples/pdz/pdz_10_random_peptides.tsv \
     --data_dir $ALPHAFOLD_DATA_DIR --outfile_prefix pdz_test1 \
     --model_names model_2_ptm --ignore_identities
 ```
@@ -56,7 +65,7 @@ non-fine-tuned parameters, which is the signal to load default parameters from t
 `params/` folder in `$ALPHAFOLD_DATA_DIR`.
 
 ```
-python3 run_prediction.py --targets examples/sh3/sh3_10_random_peptides.tsv \
+python run_prediction.py --targets examples/sh3/sh3_10_random_peptides.tsv \
     --ignore_identities --outfile_prefix sh3_test1 \
     --data_dir $ALPHAFOLD_DATA_DIR \
     --model_names model_2_ptm model_2_ptm_ft \
