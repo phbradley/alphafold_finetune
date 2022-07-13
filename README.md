@@ -6,6 +6,10 @@ fine-tuning script. Amir Motmaen and Phil Bradley further developed and
 extensively tested the fine-tuning and inference scripts in the context of
 protein-peptide binding.
 
+This repository is still under development. We plan to have everything squared away
+prior to publication. In the meantime, feel free to reach out with questions,
+comments, or other feedback. You can open a github issue or email
+`pbradley at fredhutch.org`.
 
 # Examples
 

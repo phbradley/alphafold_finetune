@@ -19,8 +19,11 @@ Examples:
 
 # this command will build models and compute confidence scores for
 # all 10mer peptides in HCV_POLG77 bound to HLA-A*02:01, using the default
-# alphafold model_2_ptm parameters
-python3 run_prediction.py --targets examples/pmhc_hcv_polg_10mers/targets.tsv --data_dir /home/pbradley/csdat/alphafold/data/ --outfile_prefix polg_test1 --model_name model_2_ptm
+# alphafold model_2_ptm parameters. You would need to change the --data_dir
+# argument to point to the location of the folder containing the alphafold
+# params/ subfolder.
+
+python3 run_prediction.py --targets examples/pmhc_hcv_polg_10mers/targets.tsv --data_dir /home/pbradley/csdat/alphafold/data/ --outfile_prefix polg_test1 --model_names model_2_ptm --ignore_identities
 
 
     ''',
