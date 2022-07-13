@@ -1,9 +1,10 @@
 # alphafold_finetune
 Python code for fine-tuning AlphaFold to perform protein-peptide binding predictions.
-This repository is a collaborative project: Justas Dauparas implemented the
+This repository is a collaborative effort: Justas Dauparas implemented the
 AlphaFold changes necessary for fine-tuning and wrote a template of the
-`run_finetuning.py` script. Phil Bradley and Amir Motmaen further developed and
-extensively tested that template for protein:peptide binding.
+fine-tuning script. Amir Motmaen and Phil Bradley further developed and
+extensively tested the fine-tuning and inference scripts in the context of
+protein-peptide binding.
 
 
 # Examples

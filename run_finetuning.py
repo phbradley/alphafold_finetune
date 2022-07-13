@@ -39,22 +39,21 @@ flags = tf1.app.flags
 
 flags.DEFINE_string('outprefix', 'testrun', help='string prefix for all outfiles')
 flags.DEFINE_string('model_name', 'model_2_ptm', help='like model_1 or model_2_ptm')
-flags.DEFINE_string('train_dataset', None, help='tsv file')
-flags.DEFINE_string('valid_dataset', None, help='tsv file')
+flags.DEFINE_string('train_dataset', None, help='tsv file with training dataset. See '
+                    'README for format info')
+flags.DEFINE_string('valid_dataset', None, help='tsv file with validation dataset')
 flags.DEFINE_integer('crop_size', 190, help='Max size of training example; set this '
                      'as low as possible for memory and speed')
-
-
 flags.DEFINE_integer('num_epochs', 10, help='number of epochs')
 flags.DEFINE_integer('batch_size', 1, help='total batch size')
 flags.DEFINE_integer('apply_every', 1, help='how often to apply gradient updates')
 flags.DEFINE_bool('notrain', False, help='if True, dont do any training')
 flags.DEFINE_bool('debug', False, help='debug')
-flags.DEFINE_bool('verbose', False, help='debug')
+flags.DEFINE_bool('verbose', False, help='verbose')
 flags.DEFINE_bool('test_load', False,
                   help='if True, loop through datasets to test loading')
-flags.DEFINE_bool('dump_pdbs', False,
-                  help='if True, loop through datasets to test loading')
+flags.DEFINE_bool('dump_pdbs', False, help='if True, write out PDB files of '
+                  'modeled structures during training')
 flags.DEFINE_integer('print_steps', 25,
                      help='printed averaged results every print_steps')
 flags.DEFINE_integer('save_steps', 100, help='save model + optimizer every save_steps')
@@ -68,8 +67,8 @@ flags.DEFINE_float('struc_viol_weight', 1.0, help='structural violation weight')
 flags.DEFINE_integer('msa_clusters', 5, help='number of msa cluster sequences')
 flags.DEFINE_integer('extra_msa', 1, help='number of extra msa sequences')
 flags.DEFINE_integer('num_evo_blocks', 48, help='number of evoformer blocks')
-flags.DEFINE_float('grad_norm_clip', 10.0, help='value to clip gradient norms '
-                   'per example')
+flags.DEFINE_float('grad_norm_clip', 10.0, help='value to clip gradient norms, '
+                   'per update')
 flags.DEFINE_string('data_dir', "/home/pbradley/csdat/alphafold/data/",
                     help='location of alphafold params; passed to '
                     'data.get_model_haiku_params; should contain params/ subfolder')
@@ -80,14 +79,20 @@ flags.DEFINE_bool('freeze_everything', False, help='if True, dont fit anything')
 flags.DEFINE_bool('no_ramp', False, help='if True, dont ramp')
 flags.DEFINE_bool('no_valid', False, help='if True, dont compute valid stats')
 flags.DEFINE_bool('no_random', False, help='if True, dont randomize')
-flags.DEFINE_bool('random_recycling', False, help='if True, set num_iter_recycling randomly during training')
+flags.DEFINE_bool('random_recycling', False, help='if True, set num_iter_recycling '
+                  'randomly during training')
 flags.DEFINE_bool('plddt_binder', False, help='if True, fit model based on pLDDT')
 flags.DEFINE_float('pae_binder_slope', -7.9019634017508675, # from logistic regression
                    help='initial slope for PAE binder model')
 flags.DEFINE_float('plddt_binder_slope', 16.690735, # from logistic regression
                    help='initial slope for pLDDT binder model')
 flags.DEFINE_multi_float('binder_intercepts', None, required=True,
-                         help='x-intercept init values')
+                         help='Initial values for the switchpoint parameter in '
+                         'the logistic regression binder layer. This is the point '
+                         'where the prediction switches from binder to non-binder. '
+                         'Should be in values of 0.01*pLDDT or 0.1*PAE, where '
+                         'pLDDT ranges 0-100 and PAE has values in the 2-20 ish range.'
+                         'See example command lines on the github README.')
 FLAGS = flags.FLAGS
 print('binder_intercepts:',FLAGS.binder_intercepts)
 

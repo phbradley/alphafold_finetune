@@ -33,17 +33,25 @@ parser.add_argument('--outfile_prefix',
 parser.add_argument('--final_outfile_prefix',
                     help='Prefix that will be prepended to the final output '
                     'tsv filename')
-parser.add_argument('--targets', required=True)
+parser.add_argument('--targets', required=True, help='File listing the targets to '
+                    'be modeled. See description of file format in the github '
+                    'README and also examples in the examples/*/*tsv')
 parser.add_argument('--data_dir', help='Location of AlphaFold params/ folder')
 
 parser.add_argument('--model_names', type=str, nargs='*', default=['model_2_ptm'])
 parser.add_argument('--model_params_files', type=str, nargs='*')
 
 parser.add_argument('--verbose', action='store_true')
-parser.add_argument('--ignore_identities', action='store_true')
-parser.add_argument('--no_pdbs', action='store_true')
-parser.add_argument('--terse', action='store_true')
-parser.add_argument('--no_resample_msa', action='store_true')
+parser.add_argument('--ignore_identities', action='store_true',
+                    help='Ignore the sequence identities column in the templates '
+                    'alignment files. Useful when modeling many different peptides '
+                    'using the same alignment file.')
+parser.add_argument('--no_pdbs', action='store_true', help='Dont write out pdbs')
+parser.add_argument('--terse', action='store_true', help='Dont write out pdbs or '
+                    'matrices with alphafold confidence values')
+parser.add_argument('--no_resample_msa', action='store_true', help='Dont randomly '
+                    'resample from the MSA during recycling. Perhaps useful for '
+                    'testing...')
 
 args = parser.parse_args()
 
