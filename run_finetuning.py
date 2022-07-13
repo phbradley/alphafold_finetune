@@ -1,5 +1,5 @@
 ######################################################################################88
-FREDHUTCH_HACKS = True # silly stuff Phil added for running on Hutch servers
+FREDHUTCH_HACKS = False # silly stuff Phil added for running on Hutch servers
 
 if FREDHUTCH_HACKS:
     import os
