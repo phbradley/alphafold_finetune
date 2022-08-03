@@ -11,6 +11,20 @@ prior to publication. In the meantime, feel free to reach out with questions,
 comments, or other feedback. You can open a github issue or email
 `pbradley at fredhutch.org`.
 
+UPDATE: We are having trouble with Zenodo file uploads, so in the meantime,
+I uploaded a preliminary dataset with the fine-tuned parameters and the training and
+testing datasets to dropbox:
+
+https://www.dropbox.com/s/k4gay3hwyq3k0rb/datasets_alphafold_finetune_v1_2022-08-02.tgz?dl=0
+
+Once you download the `.tgz` file, copy it into the `alphafold_finetune/` folder and
+uncompress it, something like
+
+`tar -xzvf datasets_alphafold_finetune_v1_2022-08-02.tgz`
+
+That should create a new folder called `datasets_alphafold_finetune/` and hopefully
+the relevant examples will work.
+
 # Examples
 
 ## Fine-tuning for peptide-MHC on a tiny dataset
