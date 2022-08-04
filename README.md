@@ -12,8 +12,8 @@ comments, or other feedback. You can open a github issue or email
 `pbradley at fredhutch.org`.
 
 *UPDATE:* We are having trouble with Zenodo file uploads, so in the meantime,
-I uploaded a preliminary dataset with the fine-tuned parameters and the training and
-testing datasets to dropbox:
+we have uploaded a preliminary dataset with the fine-tuned parameters and the
+training and testing datasets to dropbox:
 
 https://www.dropbox.com/s/k4gay3hwyq3k0rb/datasets_alphafold_finetune_v1_2022-08-02.tgz?dl=0
 
