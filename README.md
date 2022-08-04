@@ -11,7 +11,7 @@ prior to publication. In the meantime, feel free to reach out with questions,
 comments, or other feedback. You can open a github issue or email
 `pbradley at fredhutch.org`.
 
-UPDATE: We are having trouble with Zenodo file uploads, so in the meantime,
+*UPDATE:* We are having trouble with Zenodo file uploads, so in the meantime,
 I uploaded a preliminary dataset with the fine-tuned parameters and the training and
 testing datasets to dropbox:
 
@@ -39,7 +39,9 @@ python run_finetuning.py \
 
 ## Fine-tuning peptide-MHC (full model)
 
-For this, please download the companion dataset on Zenodo (*Phil to insert info*)
+For this, please download the companion dataset on Zenodo (actually, the Zenodo
+upload is not working yet, see above for the dropbox link to the preliminary
+dataset).
 
 ```
 python run_finetuning.py \
