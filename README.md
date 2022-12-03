@@ -29,8 +29,11 @@ the relevant examples will work.
 
 ## Fine-tuning for peptide-MHC on a tiny dataset
 
+Here $ALPHAFOLD_DATA_DIR should point to a directory that contains the AlphaFold2 `params/` subdirectory, which should in turn contain files like `params_model_2_ptm.npz`.
+
 ```
 python run_finetuning.py \
+    --data_dir $ALPHAFOLD_DATA_DIR \
     --binder_intercepts 0.80367635 --binder_intercepts 0.43373787  \
     --freeze_binder  \
     --train_dataset examples/tiny_pmhc_finetune/tiny_example_train.tsv \
@@ -45,6 +48,7 @@ dataset).
 
 ```
 python run_finetuning.py \
+    --data_dir $ALPHAFOLD_DATA_DIR \
     --binder_intercepts 0.80367635 --binder_intercepts 0.43373787 \
     --freeze_binder  \
     --train_dataset datasets_alphafold_finetune/pmhc_finetune/combo_1and2_train.tsv \
