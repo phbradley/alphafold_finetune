@@ -13,7 +13,7 @@ comments, or other feedback. You can open a github issue or email
 *UPDATE:* We have uploaded a preliminary dataset with the fine-tuned parameters and the
 training and testing datasets here:
 
-https://files.ipd.uw.edu/pub/alphafold_finetune_motmaen_pnas_2023/alphafold_finetune_v2_2023-02-20.tgz
+https://files.ipd.uw.edu/pub/alphafold_finetune_motmaen_pnas_2023/datasets_alphafold_finetune_v2_2023-02-20.tgz
 
 Once you download the `.tgz` file, copy it into the `alphafold_finetune/` folder and
 uncompress it, something like
