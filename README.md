@@ -6,24 +6,23 @@ fine-tuning script. Amir Motmaen and Phil Bradley further developed and
 extensively tested the fine-tuning and inference scripts in the context of
 protein-peptide binding.
 
-This repository is still under development. We plan to have everything squared away
-prior to publication. In the meantime, feel free to reach out with questions,
+This repository is still under development. Feel free to reach out with questions,
 comments, or other feedback. You can open a github issue or email
 `pbradley at fredhutch.org`.
 
-*UPDATE:* We are having trouble with Zenodo file uploads, so in the meantime,
-we have uploaded a preliminary dataset with the fine-tuned parameters and the
-training and testing datasets to dropbox:
+*UPDATE:* We have uploaded a preliminary dataset with the fine-tuned parameters and the
+training and testing datasets here:
 
-https://www.dropbox.com/s/k4gay3hwyq3k0rb/datasets_alphafold_finetune_v1_2022-08-02.tgz?dl=0
+https://files.ipd.uw.edu/pub/alphafold_finetune_motmaen_pnas_2023/alphafold_finetune_v2_2023-02-20.tgz
 
 Once you download the `.tgz` file, copy it into the `alphafold_finetune/` folder and
 uncompress it, something like
 
-`tar -xzvf datasets_alphafold_finetune_v1_2022-08-02.tgz`
+`tar -xzvf datasets_alphafold_finetune_v2_2023-02-20.tgz`
 
 That should create a new folder called `datasets_alphafold_finetune/` and hopefully
-the relevant examples will work.
+the relevant examples will work. Let us know if you run into trouble or would like
+any other data from the PNAS paper (Motmaen et al PNAS, https://www.pnas.org/doi/abs/10.1073/pnas.2216697120).
 
 # Examples
 
