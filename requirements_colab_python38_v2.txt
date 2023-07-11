@@ -1,4 +1,4 @@
-absl-py==0.10.0
+absl-py==0.13.0
 biopython==1.80
 chex==0.0.7
 dm-haiku==0.0.5
@@ -14,4 +14,5 @@ protobuf==3.20.1
 scipy==1.7.0
 tensorflow==2.5.0
 tensorflow-estimator==2.5.0
+torch==1.10.1
 typing-extensions==3.7.4.3
