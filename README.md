@@ -24,6 +24,10 @@ That should create a new folder called `datasets_alphafold_finetune/` and hopefu
 the relevant examples will work. Let us know if you run into trouble or would like
 any other data from the PNAS paper (Motmaen et al PNAS, https://www.pnas.org/doi/abs/10.1073/pnas.2216697120).
 
+***[NEW]*** [Google colab notebook](alphafold_ft_colab_pipeline_v1.ipynb) that gives
+examples of installing the software and running fine-tuning and binding predictions.
+[![open in colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/phbradley/alphafold_finetune/blob/main/alphafold_ft_colab_pipeline_v1.ipynb)
+
 # Examples
 
 ## Fine-tuning for peptide-MHC on a tiny dataset
