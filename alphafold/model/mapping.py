@@ -15,6 +15,7 @@
 """Specialized mapping functions."""
 
 import functools
+import inspect
 
 from typing import Any, Callable, Optional, Sequence, Union
 
@@ -46,11 +47,11 @@ def _maybe_get_size(array, axis):
 
 
 def _expand_axes(axes, values, name='sharded_apply'):
-  values_tree_def = jax.tree_flatten(values)[1]
+  values_tree_def = jax.tree_util.tree_flatten(values)[1]
   flat_axes = jax.api_util.flatten_axes(name, values_tree_def, axes)
   # Replace None's with PROXY
   flat_axes = [PROXY if x is None else x for x in flat_axes]
-  return jax.tree_unflatten(values_tree_def, flat_axes)
+  return jax.tree_util.tree_unflatten(values_tree_def, flat_axes)
 
 
 def sharded_map(
@@ -75,7 +76,11 @@ def sharded_map(
   Returns:
     function with smap applied.
   """
-  vmapped_fun = hk.vmap(fun, in_axes, out_axes)
+  if 'split_rng' in inspect.signature(hk.vmap).parameters:
+    vmapped_fun = hk.vmap(fun, in_axes, out_axes, split_rng=False)
+  else:
+    # TODO(tomhennigan): Remove this when older versions of Haiku aren't used.
+    vmapped_fun = hk.vmap(fun, in_axes, out_axes)
   return sharded_apply(vmapped_fun, shard_size, in_axes, out_axes)
 
 
@@ -120,8 +125,8 @@ def sharded_apply(
     # Expand in axes and Determine Loop range
     in_axes_ = _expand_axes(in_axes, args)
 
-    in_sizes = jax.tree_multimap(_maybe_get_size, args, in_axes_)
-    flat_sizes = jax.tree_flatten(in_sizes)[0]
+    in_sizes = jax.tree_map(_maybe_get_size, args, in_axes_)
+    flat_sizes = jax.tree_util.tree_flatten(in_sizes)[0]
     in_size = max(flat_sizes)
     assert all(i in {in_size, -1} for i in flat_sizes)
 
@@ -132,7 +137,7 @@ def sharded_apply(
     last_shard_size = shard_size if last_shard_size == 0 else last_shard_size
 
     def apply_fun_to_slice(slice_start, slice_size):
-      input_slice = jax.tree_multimap(
+      input_slice = jax.tree_map(
           lambda array, axis: _maybe_slice(array, slice_start, slice_size, axis
                                           ), args, in_axes_)
       return fun(*input_slice)
@@ -153,11 +158,11 @@ def sharded_apply(
             shard_shape[axis] * num_extra_shards +
             remainder_shape[axis],) + shard_shape[axis + 1:]
 
-      out_shapes = jax.tree_multimap(make_output_shape, out_axes_, shard_shapes,
-                                     out_shapes)
+      out_shapes = jax.tree_map(make_output_shape, out_axes_, shard_shapes,
+                                out_shapes)
 
     # Calls dynamic Update slice with different argument order
-    # This is here since tree_multimap only works with positional arguments
+    # This is here since tree_map only works with positional arguments
     def dynamic_update_slice_in_dim(full_array, update, axis, i):
       return jax.lax.dynamic_update_slice_in_dim(full_array, update, i, axis)
 
@@ -165,7 +170,7 @@ def sharded_apply(
       slice_out = apply_fun_to_slice(slice_start, slice_size)
       update_slice = partial(
           dynamic_update_slice_in_dim, i=slice_start)
-      return jax.tree_multimap(update_slice, outputs, slice_out, out_axes_)
+      return jax.tree_map(update_slice, outputs, slice_out, out_axes_)
 
     def scan_iteration(outputs, i):
       new_outputs = compute_shard(outputs, i, shard_size)
@@ -176,7 +181,7 @@ def sharded_apply(
     def allocate_buffer(dtype, shape):
       return jnp.zeros(shape, dtype=dtype)
 
-    outputs = jax.tree_multimap(allocate_buffer, out_dtypes, out_shapes)
+    outputs = jax.tree_map(allocate_buffer, out_dtypes, out_shapes)
 
     if slice_starts.shape[0] > 0:
       outputs, _ = hk.scan(scan_iteration, outputs, slice_starts)

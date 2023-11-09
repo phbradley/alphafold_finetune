@@ -331,7 +331,7 @@ class FoldIteration(hk.Module):
     safe_key, *sub_keys = safe_key.split(3)
     sub_keys = iter(sub_keys)
     act = safe_dropout_fn(act, next(sub_keys))
-    act = hk.LayerNorm(
+    act = common_modules.LayerNorm(
         axis=[-1],
         create_scale=True,
         create_offset=True,
@@ -353,7 +353,7 @@ class FoldIteration(hk.Module):
         act = jax.nn.relu(act)
     act += input_act
     act = safe_dropout_fn(act, next(sub_keys))
-    act = hk.LayerNorm(
+    act = common_modules.LayerNorm(
         axis=[-1],
         create_scale=True,
         create_offset=True,
@@ -410,7 +410,7 @@ def generate_affines(representations, batch, config, global_config,
   c = config
   sequence_mask = batch['seq_mask'][:, None]
 
-  act = hk.LayerNorm(
+  act = common_modules.LayerNorm(
       axis=[-1],
       create_scale=True,
       create_offset=True,
@@ -433,7 +433,7 @@ def generate_affines(representations, batch, config, global_config,
                  'affine': affine.to_tensor(),
                  }
 
-  act_2d = hk.LayerNorm(
+  act_2d = common_modules.LayerNorm(
       axis=[-1],
       create_scale=True,
       create_offset=True,
@@ -542,6 +542,7 @@ class StructureModule(hk.Module):
       value.update(compute_renamed_ground_truth(
           batch, value['final_atom14_positions']))
     sc_loss = sidechain_loss(batch, value, self.config)
+
     ret['loss'] = ((1 - self.config.sidechain.weight_frac) * ret['loss'] +
                    self.config.sidechain.weight_frac * sc_loss['loss'])
     ret['sidechain_fape'] = sc_loss['fape']
@@ -631,9 +632,8 @@ def backbone_loss(ret, batch, value, config):
   affine_trajectory = quat_affine.QuatAffine.from_tensor(value['traj'])
   rigid_trajectory = r3.rigids_from_quataffine(affine_trajectory)
 
-  #gt_affine = quat_affine.QuatAffine.from_tensor(
-  #    batch['backbone_affine_tensor'])
-  gt_affine = quat_affine.QuatAffine(quaternion=None, translation=batch['backbone_translation'], rotation=batch['backbone_rotation'], unstack_inputs=True)
+  gt_affine = quat_affine.QuatAffine.from_tensor(
+      batch['backbone_affine_tensor'])
   gt_rigid = r3.rigids_from_quataffine(gt_affine)
   backbone_mask = batch['backbone_affine_mask']
 
@@ -750,11 +750,10 @@ def find_structural_violations(
   # Compute the Van der Waals radius for every atom
   # (the first letter of the atom name is the element type).
   # Shape: (N, 14).
-  atomtype_radius = [
+  atomtype_radius = jnp.array([
       residue_constants.van_der_waals_radius[name[0]]
       for name in residue_constants.atom_types
-  ]
-  atomtype_radius = np.array(atomtype_radius) # PB fix
+  ])
   atom14_atom_radius = batch['atom14_atom_exists'] * utils.batched_gather(
       atomtype_radius, batch['residx_atom14_to_atom37'])
 

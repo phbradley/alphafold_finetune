@@ -34,7 +34,8 @@ class RunAmberRelaxTest(absltest.TestCase):
         'tolerance': 2.39,
         'stiffness': 10.0,
         'exclude_residues': [],
-        'max_outer_iterations': 1}
+        'max_outer_iterations': 1,
+        'use_gpu': False}
 
   def test_process(self):
     amber_relax = relax.AmberRelaxation(**self.test_config)
@@ -81,7 +82,7 @@ class RunAmberRelaxTest(absltest.TestCase):
          0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,
          0, 0, 0, 0])
     # Check no violations were added. Can't check exactly due to stochasticity.
-    self.assertTrue(np.all(num_violations <= exp_num_violations))
+    self.assertTrue(np.all(np.array(num_violations) <= exp_num_violations))
 
 
 if __name__ == '__main__':

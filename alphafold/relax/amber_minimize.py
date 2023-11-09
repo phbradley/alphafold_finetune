@@ -76,7 +76,8 @@ def _openmm_minimize(
     tolerance: unit.Unit,
     stiffness: unit.Unit,
     restraint_set: str,
-    exclude_residues: Sequence[int]):
+    exclude_residues: Sequence[int],
+    use_gpu: bool):
   """Minimize energy via openmm."""
 
   pdb_file = io.StringIO(pdb_str)
@@ -90,7 +91,7 @@ def _openmm_minimize(
     _add_restraints(system, pdb, stiffness, restraint_set, exclude_residues)
 
   integrator = openmm.LangevinIntegrator(0, 0.01, 0.0)
-  platform = openmm.Platform.getPlatformByName("CPU")
+  platform = openmm.Platform.getPlatformByName("CUDA" if use_gpu else "CPU")
   simulation = openmm_app.Simulation(
       pdb.topology, system, integrator, platform)
   simulation.context.setPositions(pdb.positions)
@@ -371,6 +372,7 @@ def _run_one_iteration(
     stiffness: float,
     restraint_set: str,
     max_attempts: int,
+    use_gpu: bool,
     exclude_residues: Optional[Collection[int]] = None):
   """Runs the minimization pipeline.
 
@@ -383,6 +385,7 @@ def _run_one_iteration(
       potential.
     restraint_set: The set of atoms to restrain.
     max_attempts: The maximum number of minimization attempts.
+    use_gpu: Whether to run on GPU.
     exclude_residues: An optional list of zero-indexed residues to exclude from
         restraints.
 
@@ -407,7 +410,8 @@ def _run_one_iteration(
           pdb_string, max_iterations=max_iterations,
           tolerance=tolerance, stiffness=stiffness,
           restraint_set=restraint_set,
-          exclude_residues=exclude_residues)
+          exclude_residues=exclude_residues,
+          use_gpu=use_gpu)
       minimized = True
     except Exception as e:  # pylint: disable=broad-except
       logging.info(e)
@@ -421,6 +425,7 @@ def _run_one_iteration(
 def run_pipeline(
     prot: protein.Protein,
     stiffness: float,
+    use_gpu: bool,
     max_outer_iterations: int = 1,
     place_hydrogens_every_iteration: bool = True,
     max_iterations: int = 0,
@@ -438,6 +443,7 @@ def run_pipeline(
   Args:
     prot: A protein to be relaxed.
     stiffness: kcal/mol A**2, the restraint stiffness.
+    use_gpu: Whether to run on GPU.
     max_outer_iterations: The maximum number of iterative minimization.
     place_hydrogens_every_iteration: Whether hydrogens are re-initialized
         prior to every minimization.
@@ -473,7 +479,8 @@ def run_pipeline(
         tolerance=tolerance,
         stiffness=stiffness,
         restraint_set=restraint_set,
-        max_attempts=max_attempts)
+        max_attempts=max_attempts,
+        use_gpu=use_gpu)
     prot = protein.from_pdb_string(ret["min_pdb"])
     if place_hydrogens_every_iteration:
       pdb_string = clean_protein(prot, checks=True)
@@ -493,51 +500,3 @@ def run_pipeline(
                  ret["num_residue_violations"], ret["num_exclusions"])
     iteration += 1
   return ret
-
-
-def get_initial_energies(pdb_strs: Sequence[str],
-                         stiffness: float = 0.0,
-                         restraint_set: str = "non_hydrogen",
-                         exclude_residues: Optional[Sequence[int]] = None):
-  """Returns initial potential energies for a sequence of PDBs.
-
-  Assumes the input PDBs are ready for minimization, and all have the same
-  topology.
-  Allows time to be saved by not pdbfixing / rebuilding the system.
-
-  Args:
-    pdb_strs: List of PDB strings.
-    stiffness: kcal/mol A**2, spring constant of heavy atom restraining
-        potential.
-    restraint_set: Which atom types to restrain.
-    exclude_residues: An optional list of zero-indexed residues to exclude from
-        restraints.
-
-  Returns:
-    A list of initial energies in the same order as pdb_strs.
-  """
-  exclude_residues = exclude_residues or []
-
-  openmm_pdbs = [openmm_app.PDBFile(PdbStructure(io.StringIO(p)))
-                 for p in pdb_strs]
-  force_field = openmm_app.ForceField("amber99sb.xml")
-  system = force_field.createSystem(openmm_pdbs[0].topology,
-                                    constraints=openmm_app.HBonds)
-  stiffness = stiffness * ENERGY / (LENGTH**2)
-  if stiffness > 0 * ENERGY / (LENGTH**2):
-    _add_restraints(system, openmm_pdbs[0], stiffness, restraint_set,
-                    exclude_residues)
-  simulation = openmm_app.Simulation(openmm_pdbs[0].topology,
-                                     system,
-                                     openmm.LangevinIntegrator(0, 0.01, 0.0),
-                                     openmm.Platform.getPlatformByName("CPU"))
-  energies = []
-  for pdb in openmm_pdbs:
-    try:
-      simulation.context.setPositions(pdb.positions)
-      state = simulation.context.getState(getEnergy=True)
-      energies.append(state.getPotentialEnergy().value_in_unit(ENERGY))
-    except Exception as e:  # pylint: disable=broad-except
-      logging.error("Error getting initial energy, returning large value %s", e)
-      energies.append(unit.Quantity(1e20, ENERGY))
-  return energies

@@ -11,23 +11,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Geometry Module."""
 
-"""Convenience functions for reading data."""
+from alphafold.model.geometry import rigid_matrix_vector
+from alphafold.model.geometry import rotation_matrix
+from alphafold.model.geometry import struct_of_array
+from alphafold.model.geometry import vector
 
-import io
-import os
-from alphafold.model import utils
-import haiku as hk
-import numpy as np
-# Internal import (7716).
+Rot3Array = rotation_matrix.Rot3Array
+Rigid3Array = rigid_matrix_vector.Rigid3Array
 
+StructOfArray = struct_of_array.StructOfArray
 
-def get_model_haiku_params(model_name: str, data_dir: str) -> hk.Params:
-  """Get the Haiku parameters from a model name."""
-
-  path = os.path.join(data_dir, 'params', f'params_{model_name}.npz')
-
-  with open(path, 'rb') as f:
-    params = np.load(io.BytesIO(f.read()), allow_pickle=False)
-
-  return utils.flat_params_to_haiku(params)
+Vec3Array = vector.Vec3Array
+square_euclidean_distance = vector.square_euclidean_distance
+euclidean_distance = vector.euclidean_distance
+dihedral_angle = vector.dihedral_angle
+dot = vector.dot
+cross = vector.cross

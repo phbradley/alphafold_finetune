@@ -527,8 +527,8 @@ def random_crop_to_size(protein, crop_size, max_templates, shape_schema,
       num_templates - templates_crop_start, max_templates)
 
   num_res_crop_start = tf.random.stateless_uniform(
-    shape=(), minval=0, maxval=seq_length - num_res_crop_size + 1,
-    dtype=tf.int32, seed=seed_maker())
+      shape=(), minval=0, maxval=seq_length - num_res_crop_size + 1,
+      dtype=tf.int32, seed=seed_maker())
 
   templates_select_indices = tf.argsort(tf.random.stateless_uniform(
       [num_templates], seed=seed_maker()))

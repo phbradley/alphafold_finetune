@@ -399,9 +399,9 @@ def load_stereo_chemical_props() -> Tuple[Mapping[str, List[Bond]],
   ("residue_virtual_bonds").
 
   Returns:
-    residue_bonds:  dict that maps resname --> list of Bond tuples
-    residue_virtual_bonds: dict that maps resname --> list of Bond tuples
-    residue_bond_angles: dict that maps resname --> list of BondAngle tuples
+    residue_bonds: Dict that maps resname -> list of Bond tuples.
+    residue_virtual_bonds: Dict that maps resname -> list of Bond tuples.
+    residue_bond_angles: Dict that maps resname -> list of BondAngle tuples.
   """
   stereo_chemical_props_path = os.path.join(
       os.path.dirname(os.path.abspath(__file__)), 'stereo_chemical_props.txt'
